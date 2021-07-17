@@ -4,7 +4,7 @@ using JuMP
 import GLPK, Gurobi
 import LinearAlgebra
 
-function mip_planner(domain_path, problem_path)
+function mip_planner(domain_path, problem_path, problem_constraint_fn!)
     dom, prob = get_domain_problem_objects(domain_path, problem_path)
     tree = create_causal_graph_ff(dom, prob, max_depth=1000000)
     pais, actions, action_mapping = get_edge_action_pairs(tree)
@@ -23,7 +23,12 @@ function mip_planner(domain_path, problem_path)
     @constraint(shortest_path, sum(x[iid,:]) - sum(x[:,iid])==1)
     @constraint(shortest_path, sum(x[gid,:]) - sum(x[:,gid])==-1)
 
-    @objective(shortest_path, Min, LinearAlgebra.dot(G, x))
+    # TODO: Inequality and equality constraints
+    # Want to pass in generalized constraints
+    # problem_constraint_fn! should modify shortest_path model
+    problem_objective = problem_constraint_fn!(shortest_path)
+
+    @objective(shortest_path, Min, LinearAlgebra.dot(G, x) + problem_objective)
 
     @time optimize!(shortest_path)
 

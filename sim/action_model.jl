@@ -37,8 +37,6 @@ function putdown!(obj, vis, poses, anim, ts)
     setanimation!(vis, anim)
     ts[1]+=90
     poses[obj] = (x,y,1.325)
-
-
 end
 
 function stack!(top, bot, vis, poses, anim, ts)
@@ -62,4 +60,16 @@ end
 
 function unstack!(top, bot, vis, poses, anim, ts)
     pickup!(top, vis, poses, anim, ts)
+end
+
+function dropinclutter!(obj, vis, poses, anim, ts)
+    
+end
+
+function putleft!(obj, vis, poses, anim, ts)
+
+end
+
+function putright!(obj, vis, poses, anim, ts)
+
 end
