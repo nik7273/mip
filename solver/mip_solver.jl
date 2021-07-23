@@ -4,7 +4,7 @@ using JuMP
 import GLPK, Gurobi
 import LinearAlgebra
 
-function mip_planner(domain_path, problem_path, problem_constraint_fn!)
+function mip_planner(domain_path, problem_path, problem_constraint_fn=nothing, problem_constraint_args=nothing)
     dom, prob = get_domain_problem_objects(domain_path, problem_path)
     tree = create_causal_graph_ff(dom, prob, max_depth=1000000)
     pais, actions, action_mapping = get_edge_action_pairs(tree)
@@ -26,7 +26,12 @@ function mip_planner(domain_path, problem_path, problem_constraint_fn!)
     # TODO: Inequality and equality constraints
     # Want to pass in generalized constraints
     # problem_constraint_fn! should modify shortest_path model
-    problem_objective = problem_constraint_fn!(shortest_path)
+    if problem_constraint_fn
+        problem_objective = problem_constraint_fn(shortest_path, problem_constraint_args)
+    else
+        problem_objective = 0
+    end
+    
 
     @objective(shortest_path, Min, LinearAlgebra.dot(G, x) + problem_objective)
 
@@ -37,11 +42,3 @@ function mip_planner(domain_path, problem_path, problem_constraint_fn!)
     plan = format_plan(tree, cartesian_indices, action_mapping, iid)
     return plan
 end
-
-
-
-# =#
-# println(cartesian_indices)
-# solution
-#TO DO: fix sequence of actions
-# draw_graph(tree)

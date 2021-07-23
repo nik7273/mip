@@ -10,7 +10,8 @@ function volume(object)
     return 1 # figure out how to get volume from object. Cube for now.
 end
 
-function bin_packing_constraints(model, objects, n, bin_capacity)
+function bin_packing_constraints(model, args)
+    objects, n, bin_capacity = unpack(args)
     m = size(objects)
     @variable(model, y[1:n])
     @variable(model, z[1:m, 1:n])
@@ -20,4 +21,5 @@ function bin_packing_constraints(model, objects, n, bin_capacity)
     return problem_objective
 end
 
-load_and_run_sim(domain_path, problem_path, bin_packing_constraints)
+bin_packing_args = ([0 for _ in 1:10], 10, 10)
+load_and_run_sim(domain_path, problem_path, bin_packing_constraints, bin_packing_args)

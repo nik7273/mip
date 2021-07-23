@@ -1,0 +1,5 @@
+(define (problem pb2)
+   (:domain groceryworld)
+   (:objects a b)
+   (:init (on-table a) (on-table b)  (clear a)  (clear b) (arm-empty))
+   (:goal (and (on a b))))
